@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
     }
 
     // Hash the password before saving
-    const saltGen = bcrypt.genSalt(10)
+    const saltGen = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, saltGen);
 
     // Create a new user instance
@@ -32,8 +32,7 @@ const registerUser = async (req, res) => {
     // Respond with success message
     res.status(200).json({ message: 'User registered successfully' });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: 'An error occurred while registering the user' });
+    res.status(500).json({ error: error });
   }
 };
 const loginUser = async(req,res)=>{
