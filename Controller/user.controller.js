@@ -9,7 +9,7 @@ const registerUser = async (req, res) => {
     // Check if user already exists
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res.status(402).json({ error: 'User already exists' });
+      return res.status(402).json({ error: 'email already exists' });
     }
 
     // Hash the password before saving
