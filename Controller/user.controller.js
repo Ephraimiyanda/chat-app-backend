@@ -35,6 +35,7 @@ const registerUser = async (req, res) => {
     res.status(500).json({ error: error });
   }
 };
+
 const loginUser = async(req,res)=>{
     const heroName = req.body.heroName
     const password = req.body.password
@@ -109,5 +110,48 @@ const getUserMessages = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching user messages' });
   }
 };
+const multer = require('multer');
 
-module.exports = { registerUser,loginUser, getUserProfile, sendMessage, getUserMessages };
+// Set up multer for file upload
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Set the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix); // Set the filename for the uploaded file
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Create a new post with image upload
+const createPost = async (req, res) => {
+  try {
+    const { sender, text } = req.body;
+
+    // Get the filename of the uploaded image
+    const content = req.file.filename;
+
+    // Create a new post document with the image filename
+    const newPost = new postModel({
+      sender,
+      text,
+      content,
+    });
+
+    // Save the post to the database
+    const savedPost = await newPost.save();
+
+    res.status(201).json({ success: true, post: savedPost });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ success: false, error: 'Failed to create the post' });
+  }
+};
+
+
+
+
+
+module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
