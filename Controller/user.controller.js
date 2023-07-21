@@ -1,19 +1,22 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
-const postModel = require("../Models/post.model")
+const postModel = require("../")
 const multer = require('multer');
+
+
+
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/'); // Set the destination folder for uploaded files
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix); // Set the filename for the uploaded file
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Set the filename for the uploaded file
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage});
 
 const registerUser = async (req, res) => {
   const { name, avatar, email, phoneNumber, DOB, password } = req.body;
@@ -133,11 +136,19 @@ const getUserMessages = async (req, res) => {
 // Create a new post with image upload
 const createPost = async (req, res) => {
   upload.single('image')(req, res, async (err) => {
-    if (err) {
-      console.error('Error uploading file:', err);
-      return res.status(500).json({ success: false, error: 'Failed to upload file' });
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
     }
-
+  
+    const picture = new Picture({
+      filename: req.file.filename,
+      path: req.file.path,
+    });
+  
+    picture.save()
+      .then(() => res.json({ message: 'Picture uploaded successfully' }))
+      .catch((err) => res.status(500).json({ error: 'Failed to upload picture', details: err }));
+  
     try {
       const { sender, text } = req.body;
 
