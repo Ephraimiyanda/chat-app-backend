@@ -4,14 +4,15 @@ const controller = require('../Controller/user.controller');
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
+const postController = require('../Controller/postController')
 
 // Configure Cloudinary with your API credentials
 cloudinary.config({
-    cloud_name: 'dg0kdnwt1',
-    api_key: '743174149656362',
-    api_secret: 'NT0lp3G44g26b2jYH8BX5Ju0UsY',
-  });
-  
+  cloud_name: 'dg0kdnwt1',
+  api_key: '743174149656362',
+  api_secret: 'NT0lp3G44g26b2jYH8BX5Ju0UsY',
+});
+
 
 // Set up multer with Cloudinary storage
 const storage = new CloudinaryStorage({
@@ -32,6 +33,6 @@ route.get('/', (req, res) => {
 
 route.post('/register', controller.registerUser);
 route.post('/login', controller.loginUser);
-route.post('/create', upload.single('content'), controller.createPost);
+route.post('/create', upload.single('content'), postController.createPost);
 
 module.exports = route;
