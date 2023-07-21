@@ -127,7 +127,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 // Create a new post with image upload
 const createPost = async (req, res) => {
   const form = new formidable.IncomingForm();
@@ -168,7 +167,13 @@ const createPost = async (req, res) => {
   });
 };
 
-
-
-
-module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+module.exports = {
+  upload,
+  createPost,
+  registerUser,
+  loginUser,
+  getUserProfile,
+  sendMessage,
+  getUserMessages,
+  createPost,
+};
