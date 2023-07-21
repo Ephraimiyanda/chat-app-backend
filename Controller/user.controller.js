@@ -4,6 +4,12 @@ const messageModel = require('../Models/message.model');
 const postModel = require("../")
 const multer = require('multer');
 
+const pictureSchema = new mongoose.Schema({
+  filename: String,
+  path: String,
+});
+
+const Picture = mongoose.model('Picture', pictureSchema);
 
 
 
