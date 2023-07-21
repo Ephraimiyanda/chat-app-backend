@@ -1,29 +1,18 @@
 const bcrypt = require('bcrypt');
+require("dotenv").config();
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
-const postModel = require("../")
-const multer = require('multer');
-const mongoose = require("mongoose")
+const cloudinary = require("cloudinary").v2;
+const cors = require("cors");
+const Multer = require("multer");
+const app  = express();
 
-const pictureSchema = new mongoose.Schema({
-  filename: String,
-  path: String,
+cloudinary.config({
+  cloud_name: process.env.dg0kdnwt1,
+  api_key: process.env.743174149656362,
+  api_secret: process.env.NT0lp3G44g26b2jYH8BX5Ju0UsY,
 });
 
-const Picture = mongoose.model('Picture', pictureSchema);
-
-
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Set the destination folder for uploaded files
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Set the filename for the uploaded file
-  },
-});
-
-const upload = multer({ storage});
 
 const registerUser = async (req, res) => {
   const { name, avatar, email, phoneNumber, DOB, password } = req.body;
@@ -32,11 +21,12 @@ const registerUser = async (req, res) => {
     // Check if user already exists
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res.status(402).json({ error: 'Email already exists' });
+      return res.status(402).json({ error: 'email already exists' });
     }
 
     // Hash the password before saving
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const saltGen = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, saltGen);
 
     // Create a new user instance
     const newUser = new userModel({
@@ -54,30 +44,23 @@ const registerUser = async (req, res) => {
     // Respond with success message
     res.status(200).json({ message: 'User registered successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while registering user' });
+    res.status(500).json({ error: error });
   }
 };
 
-const loginUser = async (req, res) => {
-  const heroName = req.body.heroName;
-  const password = req.body.password;
+const loginUser = async(req,res)=>{
+    const heroName = req.body.heroName
+    const password = req.body.password
 
-  try {
-    const user = await userModel.findOne({ name: heroName });
-    if (!user) {
-      res.status(402).json({ message: 'User does not exist' });
-    } else {
-      const match = await bcrypt.compare(password, user.password);
-      if (match) {
-        res.status(200).json({ message: 'Logged in successfully' });
-      } else {
-        res.status(402).json({ message: 'Invalid password' });
-      }
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'An error occurred while logging in' });
-  }
-};
+     const user = await userModel.findOne({name:heroName})
+     if(!user){
+        res.status(402).json({message:"user does not exist"})
+     }
+     res.status(200).json({message:"logged in successfuly"})
+}
+
+
+
 
 const getUserProfile = async (req, res) => {
   const userId = req.params.userId;
@@ -140,52 +123,82 @@ const getUserMessages = async (req, res) => {
   }
 };
 
-// Create a new post with image upload
-const createPost = async (req, res) => {
-  upload.single('image')(req, res, async (err) => {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
-  
-    const picture = new Picture({
-      filename: req.file.filename,
-      path: req.file.path,
-    });
-  
-    picture.save()
-      .then(() => res.json({ message: 'Picture uploaded successfully' }))
-      .catch((err) => res.status(500).json({ error: 'Failed to upload picture', details: err }));
-  
-    try {
-      const { sender, text } = req.body;
+const storage = new Multer.memoryStorage();
+const upload = Multer({
+  storage,
+});
 
-      // Get the filename of the uploaded image
-      const content = req.file.filename;
-
-      // Create a new post document with the image filename
-      const newPost = new postModel({
-        sender,
-        text,
-        content,
-      });
-
-      // Save the post to the database
-      const savedPost = await newPost.save();
-
-      res.status(201).json({ success: true, post: savedPost });
-    } catch (error) {
-      console.error('Error creating post:', error);
-      res.status(500).json({ success: false, error: 'Failed to create the post' });
-    }
+async function handleUpload(file) {
+  const res = await cloudinary.uploader.upload(file, {
+    resource_type: "auto",
   });
+  return res;
+}
+
+
+app.use(cors());
+
+app.get('/', function(req, res) {
+    res.send('Hi')
+})
+
+app.post("/upload", upload.single("my_file"), async (req, res) => {
+  try {
+    const b64 = Buffer.from(req.file.buffer).toString("base64");
+    let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+    const cldRes = await handleUpload(dataURI);
+    res.json(cldRes);
+  } catch (error) {
+    console.log(error);
+    res.send({
+      message: error.message,
+    });
+  }
+});
+
+// ... The rest of your code
+
+// Handle file upload to Cloudinary
+async function handleUploadFile(file) {
+  try {
+    const b64 = Buffer.from(file.buffer).toString("base64");
+    let dataURI = "data:" + file.mimetype + ";base64," + b64;
+    const cldRes = await handleUpload(dataURI);
+    return cldRes.secure_url;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to upload file");
+  }
+}
+
+// Create a new post with image upload using Cloudinary
+const createPost = async (req, res) => {
+  try {
+    const { sender, text } = req.body;
+
+    // Get the image URL from Cloudinary
+    const imageUrl = await handleUploadFile(req.file);
+
+    // Create a new post document with the image URL
+    const newPost = new postModel({
+      sender,
+      text,
+      content: imageUrl,
+    });
+
+    // Save the post to the database
+    const savedPost = await newPost.save();
+
+    res.status(201).json({ success: true, post: savedPost });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ success: false, error: 'Failed to create the post' });
+  }
 };
 
-module.exports = {
-  upload,
-  createPost,
-  registerUser,
-  loginUser,
-  getUserProfile,
-  sendMessage,
-  getUserMessages,
-};
+
+
+
+
+
+module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
