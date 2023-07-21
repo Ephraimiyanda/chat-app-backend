@@ -200,6 +200,4 @@ const createPost = async (req, res) => {
 
 
 
-
-
 module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
