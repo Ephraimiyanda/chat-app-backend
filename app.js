@@ -6,7 +6,7 @@ app.use(CoRs())
 const port = process.env.PORT || 2000
 const body_parser = require('body-parser')
 const userRoute = require('./Route/user.route')
-const upload = require('./cloudinaryConfig');
+const upload = require('./config/cloudinaryConfig');
 
 app.post('/upload', upload.single('file'), async (req, res) => {
     try {
