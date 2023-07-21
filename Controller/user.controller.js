@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+const formidable = require('formidable');
 
 const registerUser = async (req, res) => {
   const { name, avatar, email, phoneNumber, DOB, password } = req.body;
@@ -126,31 +127,46 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
 // Create a new post with image upload
 const createPost = async (req, res) => {
-  try {
-    const { sender, text } = req.body;
+  const form = new formidable.IncomingForm();
 
-    // Get the filename of the uploaded image
-    const content = req.file.filename;
+  form.parse(req, async (err, fields, files) => {
+    if (err) {
+      console.error('Error parsing form:', err);
+      return res.status(500).json({ success: false, error: 'Failed to parse form' });
+    }
 
-    // Create a new post document with the image filename
-    const newPost = new postModel({
-      sender,
-      text,
-      content,
-    });
+    try {
+      const { sender, text } = fields;
 
-    // Save the post to the database
-    const savedPost = await newPost.save();
+      // Get the path of the uploaded image file
+      const imageFilePath = files.image.path;
 
-    res.status(201).json({ success: true, post: savedPost });
-  } catch (error) {
-    console.error('Error creating post:', error);
-    res.status(500).json({ success: false, error: 'Failed to create the post' });
-  }
+      // Upload the image file to Cloudinary and get the URL
+      const imageUploadResult = await cloudinary.uploader.upload(imageFilePath);
+
+      // Get the URL of the uploaded image
+      const imageUrl = imageUploadResult.secure_url;
+
+      // Create a new post document with the image URL
+      const newPost = new postModel({
+        sender,
+        text,
+        content: imageUrl,
+      });
+
+      // Save the post to the database
+      const savedPost = await newPost.save();
+
+      res.status(201).json({ success: true, post: savedPost });
+    } catch (error) {
+      console.error('Error creating post:', error);
+      res.status(500).json({ success: false, error: 'Failed to create the post' });
+    }
+  });
 };
-
 
 
 
