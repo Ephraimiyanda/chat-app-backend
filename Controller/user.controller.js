@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+const formidable = require('formidable');
 
 const registerUser = async (req, res) => {
   const { name, avatar, email, phoneNumber, DOB, password } = req.body;
@@ -126,6 +127,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
 // Create a new post with image upload
 const createPost = async (req, res) => {
   const form = new formidable.IncomingForm();
@@ -166,13 +168,7 @@ const createPost = async (req, res) => {
   });
 };
 
-module.exports = {
-  upload,
-  createPost,
-  registerUser,
-  loginUser,
-  getUserProfile,
-  sendMessage,
-  getUserMessages,
-  createPost,
-};
+
+
+
+module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
