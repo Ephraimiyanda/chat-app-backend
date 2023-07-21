@@ -9,7 +9,7 @@ const app  = express();
 
 cloudinary.config({
   cloud_name: process.env.dg0kdnwt1,
-  api_key: process.env.743174149656362,
+  api_key: 743174149656362,
   api_secret: process.env.NT0lp3G44g26b2jYH8BX5Ju0UsY,
 });
 
