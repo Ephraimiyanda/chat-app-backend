@@ -110,9 +110,10 @@ const getUserMessages = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching user messages' });
   }
 };
-const multer = require('multer');
+
 
 // Set up multer for file upload
+const multer = require('multer');
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/'); // Set the destination folder for uploaded files
