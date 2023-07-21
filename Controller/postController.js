@@ -38,12 +38,5 @@ const createPost = async (req, res) => {
 // ... other functions ...
 
 module.exports = {
-  upload,
-  createPost,
-  registerUser,
-  loginUser,
-  getUserProfile,
-  sendMessage,
-  getUserMessages,
   createPost,
 };
