@@ -132,7 +132,7 @@ const createPost = async (req, res) => {
     const { sender, text } = req.body;
 
     // Get the filename of the uploaded image
-    const content = req.file.filename;
+    const content = req.file.name;
 
     // Create a new post document with the image filename
     const newPost = new postModel({
