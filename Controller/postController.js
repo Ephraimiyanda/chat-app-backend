@@ -1,6 +1,6 @@
 
-const userModel = require('./models/user.model');
-const postModel = require('./models/post.model'); // Assuming you have a post model
+const userModel = require('../Models/user.model');
+const postModel = require('../Models/post.model'); // Assuming you have a post model
 
 // ... other functions ...
 
