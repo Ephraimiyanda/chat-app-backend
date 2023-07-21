@@ -6,7 +6,7 @@ const express = require("express");
 const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
 const Multer = require("multer");
-
+const app=express();
 
 cloudinary.config({
   cloud_name: process.env.dg0kdnwt1,
@@ -137,13 +137,8 @@ async function handleUpload(file) {
 }
 
 
-app.use(cors());
 
-app.get('/', function(req, res) {
-    res.send('Hi')
-})
-
-app.post("/upload", upload.single("my_file"), async (req, res) => {
+app.post("/upload", upload.single("content"), async (req, res) => {
   try {
     const b64 = Buffer.from(req.file.buffer).toString("base64");
     let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
