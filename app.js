@@ -17,3 +17,7 @@ app.use(body_parser.urlencoded({extended:true}))
 app.use(body_parser.json())
 
 app.use('/user', userRoute)
+app.use(cors({
+    origin: 'http://localhost:3000/',
+  }));
+  
