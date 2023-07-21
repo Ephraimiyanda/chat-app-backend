@@ -3,7 +3,7 @@ const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
 
 const registerUser = async (req, res) => {
-  const { name, avatar, email, phoneNumber, DOB, password } = req.body;
+  const { heroName, avatar, email, phoneNumber, DOB, password } = req.body;
 
   try {
     // Check if user already exists
@@ -18,7 +18,7 @@ const registerUser = async (req, res) => {
 
     // Create a new user instance
     const newUser = new userModel({
-      name,
+      heroName,
       avatar,
       email,
       phoneNumber,
@@ -40,7 +40,7 @@ const loginUser = async(req,res)=>{
     const heroName = req.body.heroName
     const password = req.body.password
 
-     const user = await userModel.findOne({name:heroName})
+     const user = await userModel.findOne({heroName:heroName})
      if(!user){
         res.status(402).json({message:"user does not exist"})
      }
