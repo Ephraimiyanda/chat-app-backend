@@ -1,6 +1,12 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+require("dotenv").config();
+const express = require("express");
+const cloudinary = require("cloudinary").v2;
+const cors = require("cors");
+const Multer = require("multer");
+
 
 cloudinary.config({
   cloud_name: process.env.dg0kdnwt1,
