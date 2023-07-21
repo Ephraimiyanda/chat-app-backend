@@ -152,4 +152,4 @@ const createPost = async (newPost) => {
   }
 };
 
-module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+module.exports = { registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
