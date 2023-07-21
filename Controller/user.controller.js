@@ -3,6 +3,7 @@ const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
 const postModel = require("../")
 const multer = require('multer');
+const mongoose = require("mongoose")
 
 const pictureSchema = new mongoose.Schema({
   filename: String,
