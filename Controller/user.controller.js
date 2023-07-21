@@ -1,6 +1,19 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+const postModel = require("../Models/post.model")
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Set the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix); // Set the filename for the uploaded file
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const registerUser = async (req, res) => {
   const { name, avatar, email, phoneNumber, DOB, password } = req.body;
@@ -9,12 +22,11 @@ const registerUser = async (req, res) => {
     // Check if user already exists
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
-      return res.status(402).json({ error: 'email already exists' });
+      return res.status(402).json({ error: 'Email already exists' });
     }
 
     // Hash the password before saving
-    const saltGen = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, saltGen);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user instance
     const newUser = new userModel({
@@ -32,23 +44,30 @@ const registerUser = async (req, res) => {
     // Respond with success message
     res.status(200).json({ message: 'User registered successfully' });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: 'An error occurred while registering user' });
   }
 };
 
-const loginUser = async(req,res)=>{
-    const heroName = req.body.heroName
-    const password = req.body.password
+const loginUser = async (req, res) => {
+  const heroName = req.body.heroName;
+  const password = req.body.password;
 
-     const user = await userModel.findOne({name:heroName})
-     if(!user){
-        res.status(402).json({message:"user does not exist"})
-     }
-     res.status(200).json({message:"logged in successfuly"})
-}
-
-
-
+  try {
+    const user = await userModel.findOne({ name: heroName });
+    if (!user) {
+      res.status(402).json({ message: 'User does not exist' });
+    } else {
+      const match = await bcrypt.compare(password, user.password);
+      if (match) {
+        res.status(200).json({ message: 'Logged in successfully' });
+      } else {
+        res.status(402).json({ message: 'Invalid password' });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while logging in' });
+  }
+};
 
 const getUserProfile = async (req, res) => {
   const userId = req.params.userId;
@@ -111,48 +130,44 @@ const getUserMessages = async (req, res) => {
   }
 };
 
-
-// Set up multer for file upload
-const multer = require('multer');
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Set the destination folder for uploaded files
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname + '-' + uniqueSuffix); // Set the filename for the uploaded file
-  },
-});
-
-const upload = multer({ storage: storage });
-
 // Create a new post with image upload
 const createPost = async (req, res) => {
-  try {
-    const { sender, text } = req.body;
+  upload.single('image')(req, res, async (err) => {
+    if (err) {
+      console.error('Error uploading file:', err);
+      return res.status(500).json({ success: false, error: 'Failed to upload file' });
+    }
 
-    // Get the filename of the uploaded image
-    const content = req.file.filename;
+    try {
+      const { sender, text } = req.body;
 
-    // Create a new post document with the image filename
-    const newPost = new postModel({
-      sender,
-      text,
-      content,
-    });
+      // Get the filename of the uploaded image
+      const content = req.file.filename;
 
-    // Save the post to the database
-    const savedPost = await newPost.save();
+      // Create a new post document with the image filename
+      const newPost = new postModel({
+        sender,
+        text,
+        content,
+      });
 
-    res.status(201).json({ success: true, post: savedPost });
-  } catch (error) {
-    console.error('Error creating post:', error);
-    res.status(500).json({ success: false, error: 'Failed to create the post' });
-  }
+      // Save the post to the database
+      const savedPost = await newPost.save();
+
+      res.status(201).json({ success: true, post: savedPost });
+    } catch (error) {
+      console.error('Error creating post:', error);
+      res.status(500).json({ success: false, error: 'Failed to create the post' });
+    }
+  });
 };
 
-
-
-
-
-module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+module.exports = {
+  upload,
+  createPost,
+  registerUser,
+  loginUser,
+  getUserProfile,
+  sendMessage,
+  getUserMessages,
+};
