@@ -3,7 +3,7 @@ const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
 
 const registerUser = async (req, res) => {
-  const { heroName, avatar, email, phoneNumber, DOB, password } = req.body;
+  const { name, avatar, email, phoneNumber, DOB, password } = req.body;
 
   try {
     // Check if user already exists
@@ -18,7 +18,7 @@ const registerUser = async (req, res) => {
 
     // Create a new user instance
     const newUser = new userModel({
-      heroName,
+      name,
       avatar,
       email,
       phoneNumber,
@@ -40,7 +40,7 @@ const loginUser = async(req,res)=>{
     const heroName = req.body.heroName
     const password = req.body.password
 
-     const user = await userModel.findOne({heroName:heroName})
+     const user = await userModel.findOne({name:heroName})
      if(!user){
         res.status(402).json({message:"user does not exist"})
      }
@@ -128,43 +128,29 @@ const upload = multer({ storage: storage });
 
 // Create a new post with image upload
 const createPost = async (req, res) => {
-  const form = new formidable.IncomingForm();
+  try {
+    const { sender, text } = req.body;
 
-  form.parse(req, async (err, fields, files) => {
-    if (err) {
-      console.error('Error parsing form:', err);
-      return res.status(500).json({ success: false, error: 'Failed to parse form' });
-    }
+    // Get the filename of the uploaded image
+    const content = req.file.filename;
 
-    try {
-      const { sender, text } = fields;
+    // Create a new post document with the image filename
+    const newPost = new postModel({
+      sender,
+      text,
+      content,
+    });
 
-      // Get the path of the uploaded image file
-      const imageFilePath = files.image.path;
+    // Save the post to the database
+    const savedPost = await newPost.save();
 
-      // Upload the image file to Cloudinary and get the URL
-      const imageUploadResult = await cloudinary.uploader.upload(imageFilePath);
-
-      // Get the URL of the uploaded image
-      const imageUrl = imageUploadResult.secure_url;
-
-      // Create a new post document with the image URL
-      const newPost = new postModel({
-        sender,
-        text,
-        content: imageUrl,
-      });
-
-      // Save the post to the database
-      const savedPost = await newPost.save();
-
-      res.status(201).json({ success: true, post: savedPost });
-    } catch (error) {
-      console.error('Error creating post:', error);
-      res.status(500).json({ success: false, error: 'Failed to create the post' });
-    }
-  });
+    res.status(201).json({ success: true, post: savedPost });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ success: false, error: 'Failed to create the post' });
+  }
 };
+
 
 
 
