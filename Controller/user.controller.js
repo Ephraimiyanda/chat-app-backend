@@ -129,43 +129,32 @@ const upload = Multer({
   storage,
 });
 
+
+
+
 async function handleUpload(file) {
-  const res = await cloudinary.uploader.upload(file, {
-    resource_type: "auto",
-  });
-  return res;
-}
-
-
-
-app.post("/upload", upload.single("content"), async (req, res) => {
-  try {
-    const b64 = Buffer.from(req.file.buffer).toString("base64");
-    let dataURI = "data:" + req.file.mimetype + ";base64," + b64;
-    const cldRes = await handleUpload(dataURI);
-    res.json(cldRes);
-  } catch (error) {
-    console.log(error);
-    res.send({
-      message: error.message,
-    });
-  }
-});
-
-// ... The rest of your code
-
-// Handle file upload to Cloudinary
-async function handleUploadFile(file) {
   try {
     const b64 = Buffer.from(file.buffer).toString("base64");
     let dataURI = "data:" + file.mimetype + ";base64," + b64;
-    const cldRes = await handleUpload(dataURI);
-    return cldRes.secure_url;
+    const cldRes = await cloudinary.uploader.upload(dataURI, {
+      resource_type: "auto",
+    });
+    return cldRes;
   } catch (error) {
     console.log(error);
     throw new Error("Failed to upload file");
   }
 }
+
+app.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    const cldRes = await handleUpload(req.file);
+    res.json(cldRes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Create a new post with image upload using Cloudinary
 const createPost = async (req, res) => {
@@ -173,13 +162,13 @@ const createPost = async (req, res) => {
     const { sender, text } = req.body;
 
     // Get the image URL from Cloudinary
-    const imageUrl = await handleUploadFile(req.file);
+    const imageUrl = await handleUpload(req.file);
 
     // Create a new post document with the image URL
     const newPost = new postModel({
       sender,
       text,
-      content: imageUrl,
+      content: imageUrl.secure_url, // Save the secure URL from Cloudinary
     });
 
     // Save the post to the database
