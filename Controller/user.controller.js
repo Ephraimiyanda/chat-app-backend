@@ -127,4 +127,4 @@ const getUserMessages = async (req, res) => {
 
 
 
-module.exports = {  registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+module.exports = {  registerUser,loginUser, getUserProfile, sendMessage, getUserMessages};
