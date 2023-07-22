@@ -116,17 +116,22 @@ const getUserMessages = async (req, res) => {
   }
 };
 
+const storage = new Multer.memoryStorage();
+const upload = Multer({
+  storage,
+});
+
 
 
 
 const createPost = async (req, res) => {
   try {
-    
-    const result = await cloudinary.uploader.upload(req.file.path);
+    const { sender, text } = req.body;
+    const result = await cloudinary.uploader.upload(req.content.path);
     // Create a new post document with the image URL
     const newPost = new postModel({
-      sender:req.body.sender,
-      text:req.body.text,
+      sender,
+      text,
       content: result.secure_url, // Save the secure URL from Cloudinary
     });
     await newPost.save()
@@ -142,4 +147,4 @@ const createPost = async (req, res) => {
 
 
 
-module.exports = { createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
