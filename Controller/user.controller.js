@@ -1,10 +1,8 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
-
 const express = require("express");
-const cloudinary = require("cloudinary").v2;
-const cors = require("cors");
+import {v2 as cloudinary} from 'cloudinary';
 const Multer = require("multer");
 const app=express();
 
