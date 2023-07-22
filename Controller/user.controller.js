@@ -7,12 +7,7 @@ const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
 const Multer = require("multer");
 const app=express();
-
-cloudinary.config({
-  cloud_name: "dg0kdnwt1",
-  api_key:"743174149656362",
-  api_secret: "NT0lp3G44g26b2jYH8BX5Ju0UsY",
-});
+const cloud = require("../config/cloudinaryConfig")
 
 
 const registerUser = async (req, res) => {
@@ -124,48 +119,32 @@ const getUserMessages = async (req, res) => {
   }
 };
 
-const storage = new Multer.memoryStorage();
-const upload = Multer({
-  storage,
-});
-
-
-
-
-async function handleUpload(file) {
-  try {
-    const b64 = Buffer.from(file.buffer).toString("base64");
-    let dataURI = "data:" + file.mimetype + ";base64," + b64;
-    const cldRes = await cloudinary.uploader.upload(dataURI, {
-      resource_type: "auto",
-    });
-    return cldRes;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to upload file");
-  }
-}
-
 
 // Create a new post with image upload using Cloudinary
 const createPost = async (req, res) => {
   try {
     const { sender, text } = req.body;
 
-    // Get the image URL from Cloudinary
-    const imageUrl = await handleUpload(req.file);
+    let attempt = {
+      content: req.files[0].path,
+      
+    };
 
-    // Create a new post document with the image URL
-    const newPost = new postModel({
+    cloud.uploads(attempt.content).then(async (result)=>{
+      let imageUrl=result.url
+      
+      const newPost = new postModel({
       sender,
       text,
-      content: imageUrl.secure_url, // Save the secure URL from Cloudinary
+      content:imageUrl , // Save the secure URL from Cloudinary
     });
 
-    // Save the post to the database
     const savedPost = await newPost.save();
-
-    res.status(201).json({ success: true, post: savedPost });
+     res.status(201).json({ success: true, post: savedPost });
+    
+    })
+    
+ 
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).json({ success: false, error: 'Failed to create the post' });
