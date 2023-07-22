@@ -1,19 +1,6 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
-require("dotenv").config();
-const express = require("express");
-const cloudinary = require("cloudinary").v2;
-const cors = require("cors");
-const Multer = require("multer");
-const app=express();
-
-cloudinary.config({
-  cloud_name: "dg0kdnwt1",
-  api_key:"743174149656362",
-  api_secret: "NT0lp3G44g26b2jYH8BX5Ju0UsY",
-});
-
 
 const registerUser = async (req, res) => {
   const { name, avatar, email, phoneNumber, DOB, password } = req.body;
@@ -124,51 +111,34 @@ const getUserMessages = async (req, res) => {
   }
 };
 
-const storage = new Multer.memoryStorage();
-const upload = Multer({
-  storage,
+
+// Set up multer for file upload
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Set the destination folder for uploaded files
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + '-' + uniqueSuffix); // Set the filename for the uploaded file
+  },
 });
 
+const upload = multer({ storage: storage });
 
-
-
-async function handleUpload(file) {
-  try {
-    const b64 = Buffer.from(file.buffer).toString("base64");
-    let dataURI = "data:" + file.mimetype + ";base64," + b64;
-    const cldRes = await cloudinary.uploader.upload(dataURI, {
-      resource_type: "auto",
-    });
-    return cldRes;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to upload file");
-  }
-}
-
-app.post("/upload", upload.single("image"), async (req, res) => {
-  try {
-    const cldRes = await handleUpload(req.file);
-    res.json(cldRes);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Create a new post with image upload using Cloudinary
+// Create a new post with image upload
 const createPost = async (req, res) => {
   try {
     const { sender, text } = req.body;
 
-    // Get the image URL from Cloudinary
-    const imageUrl = await handleUpload(req.file);
+    // Get the filename of the uploaded image
+    const content = req.file.name;
 
-    // Create a new post document with the image URL
+    // Create a new post document with the image filename
     const newPost = new postModel({
       sender,
       text,
-      content: imageUrl.secure_url, // Save the secure URL from Cloudinary
+      content,
     });
 
     // Save the post to the database
@@ -180,6 +150,8 @@ const createPost = async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to create the post' });
   }
 };
+
+
 
 
 
