@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+require("dotenv").config();
 const express = require("express");
 const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
@@ -9,8 +10,8 @@ const app=express();
 
 cloudinary.config({
   cloud_name: "dg0kdnwt1",
-  api_key: "743174149656362",
-  api_secret:"NT0lp3G44g26b2jYH8BX5Ju0UsY",
+  api_key:"743174149656362",
+  api_secret: "NT0lp3G44g26b2jYH8BX5Ju0UsY",
 });
 
 
@@ -160,14 +161,14 @@ const createPost = async (req, res) => {
   try {
     const { sender, text } = req.body;
 
-    // Call the handleUpload function with the actual file buffer
-    const imageUrl = await handleUpload(req.file.buffer);
+    // Get the image URL from Cloudinary
+    const imageUrl = await handleUpload(req.file);
 
     // Create a new post document with the image URL
     const newPost = new postModel({
       sender,
       text,
-      content: imageUrl.secure_url,
+      content: imageUrl.secure_url, // Save the secure URL from Cloudinary
     });
 
     // Save the post to the database
@@ -182,4 +183,5 @@ const createPost = async (req, res) => {
 
 
 
-module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages};
+
+module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
