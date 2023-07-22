@@ -116,11 +116,6 @@ const getUserMessages = async (req, res) => {
   }
 };
 
-const storage = new Multer.memoryStorage();
-const upload = Multer({
-  storage,
-});
-
 
 
 
