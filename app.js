@@ -1,17 +1,19 @@
+require('dotenv').config()
 const express = require('express');
-const route = express.Router();
-const controller = require('./Controller/user.controller');
-const Multer = require('multer');
+const CoRs = require('cors')
+const app  = express()
+app.use(CoRs())
+const port = process.env.PORT || 2000
+const body_parser = require('body-parser')
+const userRoute = require('./Route/user.route')
 
-const storage = Multer.memoryStorage();
-const upload = Multer({ storage });
 
-route.get('/', (req, res) => {
-  res.json('hello');
-});
+app.listen(port,()=>{
+    console.log(`app listening @ port ${port}`);
+})
+const Db = require('./config/db')
+Db()
+app.use(body_parser.urlencoded({extended:true}))
+app.use(body_parser.json())
 
-route.post('/register', controller.registerUser);
-route.post('/login', controller.loginUser);
-
-route.post('/create', upload.single('content'),controller.createPost);
-module.exports = route;
+app.use('/user', userRoute)
