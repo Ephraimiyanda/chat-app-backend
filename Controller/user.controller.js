@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
-require("dotenv").config();
+
 const express = require("express");
 const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
@@ -9,9 +9,9 @@ const Multer = require("multer");
 const app=express();
 
 cloudinary.config({
-  cloud_name: process.env.dg0kdnwt1,
+  cloud_name: dg0kdnwt1,
   api_key: 743174149656362,
-  api_secret: process.env.NT0lp3G44g26b2jYH8BX5Ju0UsY,
+  api_secret:NT0lp3G44g26b2jYH8BX5Ju0UsY,
 });
 
 
