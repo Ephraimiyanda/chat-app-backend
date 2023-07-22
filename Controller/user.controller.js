@@ -121,9 +121,8 @@ const getUserMessages = async (req, res) => {
 };
 
 
-// Create a new post with image upload using Cloudinary
-module.exports = {
-  createposts: (req, res) => {
+
+ const createPost = (req, res) => {
     let imageDetails = {
       imageName: req.files[0].originalname,
     };
@@ -163,8 +162,8 @@ module.exports = {
         });
       }
     });
-  },
-}
+ }
 
 
-module.exports = { createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+
+module.exports = { createPost ,registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
