@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
-
 const express = require("express");
 const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
@@ -124,64 +123,8 @@ const getUserMessages = async (req, res) => {
   }
 };
 
-const storage = new Multer.memoryStorage();
-const upload = Multer({
-  storage,
-});
 
 
 
 
-async function handleUpload(file) {
-  try {
-    const b64 = Buffer.from(file.buffer).toString("base64");
-    let dataURI = "data:" + file.mimetype + ";base64," + b64;
-    const cldRes = await cloudinary.uploader.upload(dataURI, {
-      resource_type: "auto",
-    });
-    return cldRes;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to upload file");
-  }
-}
-
-app.post("/upload", upload.single("image"), async (req, res) => {
-  try {
-    const cldRes = await handleUpload(req.file);
-    res.json(cldRes);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Create a new post with image upload using Cloudinary
-const createPost = async (req, res) => {
-  try {
-    const { sender, text } = req.body;
-
-    // Get the image URL from Cloudinary
-    const imageUrl = await handleUpload(req.file);
-
-    // Create a new post document with the image URL
-    const newPost = new postModel({
-      sender,
-      text,
-      content: imageUrl.secure_url, // Save the secure URL from Cloudinary
-    });
-
-    // Save the post to the database
-    const savedPost = await newPost.save();
-
-    res.status(201).json({ success: true, post: savedPost });
-  } catch (error) {
-    console.error('Error creating post:', error);
-    res.status(500).json({ success: false, error: 'Failed to create the post' });
-  }
-};
-
-
-
-
-module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+module.exports = {  registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
