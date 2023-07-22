@@ -132,30 +132,6 @@ const upload = Multer({
 
 
 
-async function handleUpload(file) {
-  try {
-    const b64 = Buffer.from(file.buffer).toString("base64");
-    let dataURI = "data:" + file.mimetype + ";base64," + b64;
-    const cldRes = await cloudinary.uploader.upload(dataURI, {
-      resource_type: "auto",
-    });
-    return cldRes;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to upload file");
-  }
-}
-
-app.post("/upload", upload.single("image"), async (req, res) => {
-  try {
-    const cldRes = await handleUpload(req.file);
-    res.json(cldRes);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // Create a new post with image upload using Cloudinary
 const createPost = async (req, res) => {
   try {
