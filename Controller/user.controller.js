@@ -1,15 +1,17 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+
 const express = require("express");
-const cloudinary = require("cloudinary");
+const cloudinary = require("cloudinary").v2;
+const cors = require("cors");
 const Multer = require("multer");
 const app=express();
 
 cloudinary.config({
-  cloud_name: dg0kdnwt1,
-  api_key: 743174149656362,
-  api_secret:NT0lp3G44g26b2jYH8BX5Ju0UsY,
+  cloud_name: "dg0kdnwt1",
+  api_key: "743174149656362",
+  api_secret:"NT0lp3G44g26b2jYH8BX5Ju0UsY",
 });
 
 
