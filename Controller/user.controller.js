@@ -146,7 +146,15 @@ async function handleUpload(file) {
   }
 }
 
-
+app.post("/upload", upload.single("image"), async (req, res) => {
+  try {
+    const cldRes = await handleUpload(req.file);
+    res.json(cldRes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Create a new post with image upload using Cloudinary
 const createPost = async (req, res) => {
