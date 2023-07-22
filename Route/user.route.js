@@ -12,5 +12,4 @@ route.post('/login',controller.loginUser);
 route.post('/create',controller.createPost);
 
 
-
 module.exports = route
