@@ -136,7 +136,7 @@ const getUserMessages = async (req, res) => {
         });
       } else {
         let attempt = {
-          content: req.files[0].path,
+          content: req.files.path,
           text
         };
         cloud.uploads(attempt.content).then((result) => {
