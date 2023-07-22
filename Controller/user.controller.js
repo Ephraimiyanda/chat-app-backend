@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+const postModel =require("../Models/post.model")
 require("dotenv").config();
 const express = require("express");
 const cloudinary = require("cloudinary").v2;
@@ -121,37 +122,49 @@ const getUserMessages = async (req, res) => {
 
 
 // Create a new post with image upload using Cloudinary
-const createPost = async (req, res) => {
-  try {
-    const { sender, text } = req.body;
-
-    let attempt = {
-      content: req.files[0].path,
-      
+module.exports = {
+  createImage: (req, res) => {
+    let imageDetails = {
+      imageName: req.files[0].originalname,
     };
-
-    cloud.uploads(attempt.content).then(async (result)=>{
-      let imageUrl=result.url
-      
-      const newPost = new postModel({
-      sender,
-      text,
-      content:imageUrl , // Save the secure URL from Cloudinary
+    //USING MONGODB QUERY METHOD TO FIND IF IMAGE-NAME EXIST IN THE DB
+    postModel.find({ content: imageDetails.imageName }, (err, callback) => {
+      //CHECKING IF ERROR OCCURRED.
+      if (err) {
+        res.json({
+          err: err,
+          message: `There was a problem creating the image because: ${err.message}`,
+        });
+      } else {
+        let attempt = {
+          content: req.files[0].path,
+          text
+        };
+        cloud.uploads(attempt.content).then((result) => {
+          let imageDetails = {
+            content: result.url,
+            text
+          };
+          // Create image in the database
+          postModel
+            .create(imageDetails)
+            .then((image) => {
+              res.json({
+                success: true,
+                data: image,
+              });
+            })
+            .catch((error) => {
+              res.json({
+                success: false,
+                message: `Error creating image in the database: ${error.message}`,
+              });
+            });
+        });
+      }
     });
-
-    const savedPost = await newPost.save();
-     res.status(201).json({ success: true, post: savedPost });
-    
-    })
-    
- 
-  } catch (error) {
-    console.error('Error creating post:', error);
-    res.status(500).json({ success: false, error: 'Failed to create the post' });
-  }
-};
-
-
+  },
+}
 
 
 module.exports = { createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
