@@ -6,14 +6,4 @@ cloudinary.config({
     api_secret: "NT0lp3G44g26b2jYH8BX5Ju0UsY",
   });
   
-  exports.uploads = (file) => {
-    return new Promise((resolve) => {
-      cloudinary.uploader.upload(
-        file,
-        (result) => {
-          resolve({ url: result.url, id: result.public_id });
-        },
-        { resource_type: "auto" }
-      );
-    });
-  };
+  module.exports=cloudinary

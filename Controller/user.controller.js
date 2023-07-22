@@ -1,14 +1,10 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
-const postModel =require("../Models/post.model")
 require("dotenv").config();
-const express = require("express");
-const cloudinary = require("cloudinary").v2;
-const cors = require("cors");
-const Multer = require("multer");
-const app=express();
-const cloud = require("../config/cloudinaryConfig")
+const cloudinary = require("../config/cloudinaryConfig");
+const upload = require("../config/multerConfig");
+
 
 
 const registerUser = async (req, res) => {
@@ -120,50 +116,35 @@ const getUserMessages = async (req, res) => {
   }
 };
 
+const storage = new Multer.memoryStorage();
+const upload = Multer({
+  storage,
+});
 
 
- const createPost = (req, res) => {
-    let imageDetails = {
-      imageName: req.files[0].originalname,
-    };
-    //USING MONGODB QUERY METHOD TO FIND IF IMAGE-NAME EXIST IN THE DB
-    postModel.find({ content: imageDetails.imageName }, (err, callback) => {
-      //CHECKING IF ERROR OCCURRED.
-      if (err) {
-        res.json({
-          err: err,
-          message: `There was a problem creating the image because: ${err.message}`,
-        });
-      } else {
-        let attempt = {
-          content: req.files.path,
-          text
-        };
-        cloud.uploads(attempt.content).then((result) => {
-          let imageDetails = {
-            content: result.url,
-            text
-          };
-          // Create image in the database
-          postModel
-            .create(imageDetails)
-            .then((image) => {
-              res.json({
-                success: true,
-                data: image,
-              });
-            })
-            .catch((error) => {
-              res.json({
-                success: false,
-                message: `Error creating image in the database: ${error.message}`,
-              });
-            });
-        });
-      }
+
+
+const createPost = async (req, res) => {
+  try {
+    
+    const result = await cloudinary.uploader.upload(req.file.path);
+    // Create a new post document with the image URL
+    const newPost = new postModel({
+      sender:req.body.sender,
+      text:req.body.text,
+      content: result.secure_url, // Save the secure URL from Cloudinary
     });
- }
+    await newPost.save()
+    const savedPost = await newPost.save();
+
+    res.status(201).json({ success: true, post: savedPost });
+  } catch (error) {
+    console.error('Error creating post:', error);
+    res.status(500).json({ success: false, error: 'Failed to create the post' });
+  }
+};
 
 
 
-module.exports = { createPost ,registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+
+module.exports = { createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
