@@ -123,7 +123,7 @@ const getUserMessages = async (req, res) => {
 
 // Create a new post with image upload using Cloudinary
 module.exports = {
-  createImage: (req, res) => {
+  createposts: (req, res) => {
     let imageDetails = {
       imageName: req.files[0].originalname,
     };
