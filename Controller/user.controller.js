@@ -122,9 +122,8 @@ const getUserMessages = async (req, res) => {
 
 const createPost = async (req, res) => {
   try {
-    const { sender, text,content } = req.body;
+    const { text,content } = req.body;
     const newPost = new postModel({
-      sender,
       text,
       content 
     });
