@@ -121,17 +121,14 @@ const getUserMessages = async (req, res) => {
 
 const createPost = async (req, res) => {
   try {
-    const { sender, text } = req.body;
-    const result = await cloudinary.uploader.upload(req.content.path);
-    // Create a new post document with the image URL
+    const { sender, text,content } = req.body;
     const newPost = new postModel({
       sender,
       text,
-      content: result.secure_url, // Save the secure URL from Cloudinary
+      content // Save the secure URL from Cloudinary
     });
     await newPost.save()
     const savedPost = await newPost.save();
-
     res.status(201).json({ success: true, post: savedPost });
   } catch (error) {
     console.error('Error creating post:', error);

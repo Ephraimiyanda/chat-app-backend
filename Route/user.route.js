@@ -11,6 +11,6 @@ route.get('/',(req,res)=>{
 
 route.post('/register',controller.registerUser);
 route.post('/login',controller.loginUser);
-route.post('/create', upload.single("image"),controller.createPost);
+route.post('/create',controller.createPost);
 
 module.exports = route
