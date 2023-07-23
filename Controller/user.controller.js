@@ -125,9 +125,8 @@ const createPost = async (req, res) => {
     const newPost = new postModel({
       sender,
       text,
-      content // Save the secure URL from Cloudinary
+      content 
     });
-    await newPost.save()
     const savedPost = await newPost.save();
     res.status(201).json({ success: true, post: savedPost });
   } catch (error) {

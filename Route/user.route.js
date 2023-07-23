@@ -1,7 +1,6 @@
 const express = require('express')
 const route = express.Router()
 const controller = require('../Controller/user.controller')
-const upload = require("../config/multerConfig");
 
 route.get('/',(req,res)=>{
     res.json('hello')
