@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const userModel = require('../Models/user.model');
 const messageModel = require('../Models/message.model');
+const postModel = require("../Models/post.model");
 require("dotenv").config();
 const cloudinary = require("../config/cloudinaryConfig");
 const upload = require("../config/multerConfig");
