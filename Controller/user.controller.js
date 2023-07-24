@@ -50,7 +50,7 @@ const loginUser = async(req,res)=>{
      if(!user){
         res.status(402).json({message:"user does not exist"})
      }
-     res.status(200).json({message:"logged in successfuly"})
+     res.status(200).json(user)
 }
 
 
@@ -121,13 +121,14 @@ const getUserMessages = async (req, res) => {
 
 
 const createPost = async (req, res) => {
+  const sender = req.params._id
   try {
-    const { text,content,sender } = req.body;
+    const { text,content} = req.body;
 
     const newPost = new postModel({
-      text:text,
-      content:content,
-      sender:sender
+      sender,
+      text,
+      content
     });
     await newPost.save();
     res.status(201).json({ success: true, post: await newPost.save()});
