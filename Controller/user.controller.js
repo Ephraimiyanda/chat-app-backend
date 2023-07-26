@@ -123,10 +123,11 @@ const getUserMessages = async (req, res) => {
 const createPost = async (req, res) => {
   
   try {
-    const { text,content,sender} = req.body;
+    const { text,content,sender,cloudinaryId} = req.body;
 
     const newPost = new postModel({
       sender,
+      cloudinaryId,
       text,
       content
     });

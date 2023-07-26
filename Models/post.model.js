@@ -7,6 +7,10 @@ const postSchema = new Schema({
         ref: 'users',
         required: true,
       },
+      cloudinaryId:{
+        type:String,
+        require:true,
+      },
       text:{
         type:String,
       },
