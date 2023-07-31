@@ -7,10 +7,8 @@ const registerSchema = new Schema({
        required:true 
     },
     avatar:{
-    type:String,
-    default: function () {
-      return "https://th.bing.com/th/id/R.24b823241775b806d626d4a624f03dbf?rik=noe3cJUJEyhJjw&riu=http%3a%2f%2fwww.mrctemiscamingue.org%2fwp-content%2fuploads%2f2021%2f06%2fblank-profile-picture-973460_960_720-1-400x400.png&ehk=ITnmgofPuK7Ob7bTkCa7Vu3QKPrH21Ys2Rmrvtw%2bhPE%3d&risl=&pid=ImgRaw&r=0";
-    },
+        type:String,
+        default:"https://th.bing.com/th/id/R.24b823241775b806d626d4a624f03dbf?rik=noe3cJUJEyhJjw&riu=http%3a%2f%2fwww.mrctemiscamingue.org%2fwp-content%2fuploads%2f2021%2f06%2fblank-profile-picture-973460_960_720-1-400x400.png&ehk=ITnmgofPuK7Ob7bTkCa7Vu3QKPrH21Ys2Rmrvtw%2bhPE%3d&risl=&pid=ImgRaw&r=0"
     },
     dateJoined:{
         type:Date,
