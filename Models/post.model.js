@@ -18,6 +18,10 @@ const postSchema = new Schema({
         type:String,
         require:true
       }
+      dateJoined:{
+        type:Date,
+        default:Date.now
+    },
 });
 
 
