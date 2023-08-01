@@ -17,7 +17,7 @@ const postSchema = new Schema({
       content:{
         type:String,
         require:true
-      }
+      },
       dateJoined:{
         type:Date,
         default:Date.now
