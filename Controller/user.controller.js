@@ -117,7 +117,15 @@ const getUserMessages = async (req, res) => {
   }
 };
 
-
+const allUsers =  async(req,res)=>{
+  try {
+    const getUsers = await userModel.find()
+    res.json(getUsers)
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 
 const createPost = async (req, res) => {
@@ -142,4 +150,4 @@ const createPost = async (req, res) => {
 
 
 
-module.exports = { upload,createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost };
+module.exports = { upload , createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers };
