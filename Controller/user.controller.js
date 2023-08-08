@@ -60,7 +60,7 @@ const getUserProfile = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const user = await userModel.findById(userId);
+    const user = await getUserById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -71,6 +71,23 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching user profile' });
   }
 };
+
+const getUserById = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Respond with the user's data
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching user' });
+  }
+};
+
 
 const sendMessage = async (req, res) => {
   const { senderId, receiverId, content } = req.body;
@@ -154,4 +171,4 @@ const createPost = async (req, res) => {
 
 
 
-module.exports = { upload , createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers };
+module.exports = { upload , createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,getUserById };
