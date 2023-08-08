@@ -94,12 +94,16 @@ const sendMessage = async (req, res) => {
     // Save the message to the database
     await newMessage.save();
 
+    // Emit the message to the sender and receiver using Socket.io
+    io.emit('receiveMessage', newMessage);
+
     // Respond with success message
     res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while sending the message' });
   }
 };
+
 
 const getUserMessages = async (req, res) => {
   const userId = req.params.userId;
