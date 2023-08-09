@@ -15,6 +15,7 @@ const io = socketIO(server);
 Db();
 
 // Middleware
+app.use(cors()); // Enable Cross-Origin Resource Sharing
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
