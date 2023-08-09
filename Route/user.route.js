@@ -11,7 +11,8 @@ route.get('/',(req,res)=>{
 route.post('/register',controller.registerUser);
 route.post('/login',controller.loginUser);
 route.post('/create',controller.createPost);
-route.get('allUsers',controller.allUsers)
-
+route.get('/allUsers',controller.allUsers)
+route.get('/messages/:userId', controller.getUserMessages);
+route.post('/messages/send', controller.sendMessage);
 
 module.exports = route
