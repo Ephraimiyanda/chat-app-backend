@@ -1,8 +1,11 @@
 const socketIO = require('socket.io');
 const MessageModel =require( '../Models/message.model');
+import { Server } from 'socket.io';
+import {createServer} from "http"
 
 function setupSocket(server) {
-  const io = socketIO(server, {
+    const httpserver = createServer()
+  const io =new Server(httpserver, {
     cors: {
       origin: "http://localhost:3000"
     }
