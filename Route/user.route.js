@@ -14,5 +14,5 @@ route.post('/create',controller.createPost);
 route.get('/allUsers',controller.allUsers)
 route.get('/messages/:userId', controller.getUserMessages);
 route.post('/messages/send', controller.sendMessage);
-
+route.get('/:userId', controller.getUserById)
 module.exports = route
