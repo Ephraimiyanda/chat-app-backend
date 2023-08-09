@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/user', userRoute);
-setupSocket(io)
+
 // Start the server
 server.listen(port, () => {
   console.log(`App listening at port ${port}`);
