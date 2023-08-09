@@ -1,16 +1,7 @@
 const socketIO = require('socket.io');
 const MessageModel =require( '../Models/message.model');
-const cors = require('cors');
-
 function setupSocket(server) {
-    const io = socketIO(server, {
-        cors: {
-          origin: 'http://localhost:3000', // Replace with your frontend domain
-          methods: ['GET', 'POST'],
-          credentials: true,
-        },
-      });
-    
+  const io = socketIO(server);
 
   io.on('connection', (socket) => {
     console.log('A user connected');
