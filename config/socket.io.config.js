@@ -1,31 +1,36 @@
-const http = require('http');
-const express = require('express');
 const socketIO = require('socket.io');
+import MessageModel from '../Models/message.model';
+function setupSocket(server) {
+  const io = socketIO(server);
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+  io.on('connection', (socket) => {
+    console.log('A user connected');
 
-// Handle incoming socket connections
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
+    // Listen for the 'sendMessage' event
+    socket.on('sendMessage', async (message) => {
+      try {
+        // Handle the received message, process, and save it to the database
+        const newMessage  = new MessageModel({
+          sender: message.senderId,
+          receiver: message.receiverId,
+          content: message.content,
+        });
+        newMessage.save()
+        // Save the message to the database using your messageModel or any other method
 
-  // Listen for the "sendMessage" event
-  socket.on('sendMessage', (data) => {
-    console.log('Received message:', data);
+        // Emit the message to other clients
+        io.emit('receiveMessage', newMessage);
+      } catch (error) {
+        console.error('Error handling and emitting message:', error);
+      }
+    });
 
-    // Broadcast the received message to all connected clients
-    io.emit('receiveMessage', data);
+    socket.on('disconnect', () => {
+      console.log('A user disconnected');
+    });
   });
 
-  // Handle disconnect
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
+  return io;
+}
 
-// Start the server
-const port = process.env.PORT || 3000;
-server.listen(port, () => {
-  console.log(`Socket.io server is running on port ${port}`);
-});
+module.exports = setupSocket;

@@ -1,19 +1,31 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
-const CoRs = require('cors')
-const app  = express()
-app.use(CoRs())
-const port = process.env.PORT || 2000
-const body_parser = require('body-parser')
-const userRoute = require('./Route/user.route')
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const http = require('http');
+const setupSocket = require('./config/socket.io.config'); // Import the setupSocket function
+const Db = require('./config/db');
+const userRoute = require('./routes/user.route'); // Update path to your route file
+const app = express();
+const port = process.env.PORT || 2000;
+const server = http.createServer(app);
+const socketIO = require('socket.io');
+const io = socketIO(server);
+// Connect to the database
+Db();
 
+// Middleware
+app.use(cors()); // Enable Cross-Origin Resource Sharing
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.listen(port,()=>{
-    console.log(`app listening @ port ${port}`);
-})
-const Db = require('./config/db')
-Db()
-app.use(body_parser.urlencoded({extended:true}))
-app.use(body_parser.json())
+// Routes
+app.use('/user', userRoute);
+setupSocket(io)
+// Start the server
+server.listen(port, () => {
+  console.log(`App listening at port ${port}`);
+});
 
-app.use('/user', userRoute)
+// Set up Socket.io using the setupSocket function
+
