@@ -5,6 +5,8 @@ function setupSocket(server) {
   const io = socketIO(server, {
     cors: {
       origin: "https://localhost:3000",
+      methods: ["GET", "POST"],
+      credentials: true,
     }
   });
   
