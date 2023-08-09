@@ -5,12 +5,7 @@ const postModel = require("../Models/post.model");
 require("dotenv").config();
 const cloudinary = require("../config/cloudinaryConfig");
 const upload = require("../config/multerConfig");
-const http = require('http');
-const socketIO = require('socket.io');
-const express = require('express');
-const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+
 
 
 const registerUser = async (req, res) => {
@@ -77,45 +72,36 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-const getUserById = async (req, res) => {
-  const userId = req.params.userId;
+
+const sendMessage = async (req, res) => {
+  const { senderId, receiverId, content } = req.body;
 
   try {
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    // Check if both sender and receiver exist
+    const sender = await userModel.findById(senderId);
+    const receiver = await userModel.findById(receiverId);
+
+    if (!sender || !receiver) {
+      return res.status(404).json({ error: 'Sender or receiver not found' });
     }
 
-    // Respond with the user's data
-    res.status(200).json({ user });
+    // Create a new message instance
+    const newMessage = new messageModel({
+      sender: senderId,
+      receiver: receiverId,
+      content,
+    });
+
+    // Save the message to the database
+    await newMessage.save();
+
+
+    // Respond with success message
+    res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while fetching user' });
+    res.status(500).json({ error: 'An error occurred while sending the message' });
   }
 };
-const sendMessage = async (senderId, receiverId, content) => {
-  const message = new messageModel({ sender: senderId, receiver: receiverId, content });
-
-  try {
-    await message.save();
-    io.emit('receiveMessage', message);
-  } catch (error) {
-    console.error('Error saving message:', error);
-  }
-};
-
-io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  socket.on('sendMessage', async (data) => {
-    const { senderId, receiverId, content } = data;
-    sendMessage(senderId, receiverId, content);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-  });
-});
-
 
 
 const getUserMessages = async (req, res) => {
@@ -167,4 +153,4 @@ const createPost = async (req, res) => {
 
 
 
-module.exports = { upload , createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,getUserById };
+module.exports = { upload , createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers };
