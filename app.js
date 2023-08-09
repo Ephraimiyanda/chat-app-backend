@@ -14,6 +14,13 @@ const io = socketIO(server);
 // Connect to the database
 Db();
 
+const corsOptions = {
+    origin: 'http://localhost:3000', // Replace with your frontend domain
+    methods: ['GET', 'POST'],
+    credentials: true,
+  };
+  
+app.use(cors(corsOptions));
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
