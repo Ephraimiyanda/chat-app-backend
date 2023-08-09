@@ -76,13 +76,6 @@ const sendMessage = async (req, res) => {
   const { senderId, receiverId, content } = req.body;
 
   try {
-    // Check if both sender and receiver exist
-    const sender = await userModel.findById(senderId);
-    const receiver = await userModel.findById(receiverId);
-
-    if (!sender || !receiver) {
-      return res.status(404).json({ error: 'Sender or receiver not found' });
-    }
 
     // Create a new message instance
     const newMessage = new messageModel({
