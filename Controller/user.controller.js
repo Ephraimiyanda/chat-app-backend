@@ -5,7 +5,12 @@ const postModel = require("../Models/post.model");
 require("dotenv").config();
 const cloudinary = require("../config/cloudinaryConfig");
 const upload = require("../config/multerConfig");
-
+const http = require('http');
+const socketIO = require('socket.io');
+const express = require('express');
+const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
 
 
 const registerUser = async (req, res) => {
@@ -87,39 +92,30 @@ const getUserById = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching user' });
   }
 };
-
-
-const sendMessage = async (req, res) => {
-  const { senderId, receiverId, content } = req.body;
+const sendMessage = async (senderId, receiverId, content) => {
+  const message = new messageModel({ sender: senderId, receiver: receiverId, content });
 
   try {
-    // Check if both sender and receiver exist
-    const sender = await userModel.findById(senderId);
-    const receiver = await userModel.findById(receiverId);
-
-    if (!sender || !receiver) {
-      return res.status(404).json({ error: 'Sender or receiver not found' });
-    }
-
-    // Create a new message instance
-    const newMessage = new messageModel({
-      sender: senderId,
-      receiver: receiverId,
-      content,
-    });
-
-    // Save the message to the database
-    await newMessage.save();
-
-    // Emit the message to the sender and receiver using Socket.io
-    io.emit('receiveMessage', newMessage);
-
-    // Respond with success message
-    res.status(200).json({ message: 'Message sent successfully' });
+    await message.save();
+    io.emit('receiveMessage', message);
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while sending the message' });
+    console.error('Error saving message:', error);
   }
 };
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('sendMessage', async (data) => {
+    const { senderId, receiverId, content } = data;
+    sendMessage(senderId, receiverId, content);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
 
 
 const getUserMessages = async (req, res) => {
