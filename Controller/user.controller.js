@@ -60,7 +60,7 @@ const getUserProfile = async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const user = await getUserById(userId);
+    const user = await userModel.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -71,7 +71,6 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching user profile' });
   }
 };
-
 
 const sendMessage = async (req, res) => {
   const { senderId, receiverId, content } = req.body;
@@ -95,14 +94,12 @@ const sendMessage = async (req, res) => {
     // Save the message to the database
     await newMessage.save();
 
-
     // Respond with success message
     res.status(200).json({ message: 'Message sent successfully' });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while sending the message' });
   }
 };
-
 
 const getUserMessages = async (req, res) => {
   const userId = req.params.userId;
