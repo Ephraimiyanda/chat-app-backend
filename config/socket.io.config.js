@@ -1,16 +1,13 @@
 const socketIO = require('socket.io');
-const MessageModel = require('../Models/message.model');
-const http = require('http');
+const MessageModel =require( '../Models/message.model');
 
 function setupSocket(server) {
-  const io =new socketIO(http, {
+  const io = socketIO(server, {
     cors: {
-      origin: 'http://localhost:3000', // Change this to your frontend's URL
-      methods: ['GET', 'POST'],
-      credentials: true,
-    },
+      origin: "https://localhost:3000"
+    }
   });
-
+  
   io.on('connection', (socket) => {
     console.log('A user connected');
 
@@ -18,13 +15,13 @@ function setupSocket(server) {
     socket.on('sendMessage', async (message) => {
       try {
         // Handle the received message, process, and save it to the database
-        const newMessage = new MessageModel({
+        const newMessage  = new MessageModel({
           sender: message.senderId,
           receiver: message.receiverId,
           content: message.content,
         });
-
-        await newMessage.save(); // Make sure to use await here
+        newMessage.save()
+        // Save the message to the database using your messageModel or any other method
 
         // Emit the message to other clients
         io.emit('receiveMessage', newMessage);
