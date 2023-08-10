@@ -4,7 +4,7 @@ const MessageModel =require( '../Models/message.model');
 function setupSocket(server) {
   const io = socketIO(server, {
     cors: {
-      origin: "https://localhost:3000"
+      origin: "http://localhost:3000"
     }
   });
   
