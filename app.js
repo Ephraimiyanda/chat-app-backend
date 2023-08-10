@@ -8,13 +8,14 @@ const userRoute = require('./Route/user.route'); // Update path to your route fi
 const app = express();
 const http = require('http')
 const port = process.env.PORT || 2000;
-const server = http.createServer(app);
-const socketIO = require('socket.io')(http,{
+const server = http.createServer(app)
+const MessageModel =require('./Models/message.model');
+const io = require('socket.io')(http,{
   cors:{
     origin:"http://localhost:3000"
   }
 });
-const io = setupSocket(server);
+const socket = io(server)
 // Connect to the database
 Db();
 
@@ -33,12 +34,33 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/user', userRoute);
+socket.on("connection",(socket)=>{
+  
+    // Listen for the 'sendMessage' event
+    socket.on('sendMessage', async (message) => {
+      try {
+        // Handle the received message, process, and save it to the database
+        const newMessage  = new MessageModel({
+          sender: message.senderId,
+          receiver: message.receiverId,
+          content: message.content,
+        });
+        newMessage.save()
+        // Save the message to the database using your messageModel or any other method
 
+        // Emit the message to other clients
+        io.to(message.receiverId).emit('receiveMessage', message.receiverId);
+      } catch (error) {
+        console.error('Error handling and emitting message:', error);
+      }
+    });
+
+  socket.on("disconnect", ()=>{
+    console.log("Disconnected")
+  })
+})
 // Start the server
 server.listen(port, () => {
-  socketIO.on("connection",function(socket){
-    console.log("user connected:"-socket.id);
-  })
   console.log(`App listening at port ${port}`);
 });
 

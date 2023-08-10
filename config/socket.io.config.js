@@ -24,7 +24,7 @@ function setupSocket(server) {
         // Save the message to the database using your messageModel or any other method
 
         // Emit the message to other clients
-        io.emit('receiveMessage', newMessage);
+        io.to(message.receiverId).emit('receiveMessage', message.receiverId);
       } catch (error) {
         console.error('Error handling and emitting message:', error);
       }
