@@ -72,34 +72,29 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-const sendMessage = async (req, res) => {
-  const { senderId, receiverId, content } = req.body;
-
+async function sendMessage(req, res) {
   try {
-    // Check if both sender and receiver exist
-    const sender = await userModel.findById(senderId);
-    const receiver = await userModel.findById(receiverId);
+    // Extract data from request body
+    const { senderId, receiverId, content } = req.body;
 
-    if (!sender || !receiver) {
-      return res.status(404).json({ error: 'Sender or receiver not found' });
-    }
-
-    // Create a new message instance
-    const newMessage = new messageModel({
+    // Create and save the message to the database
+    const newMessage = new Message({
       sender: senderId,
       receiver: receiverId,
-      content,
+      content: content,
     });
-
-    // Save the message to the database
     await newMessage.save();
 
-    // Respond with success message
-    res.status(200).json({ message: 'Message sent successfully' });
+    // Emit the message to the receiver using Socket.io
+    const io = req.app.get('io'); // Get the io instance from the app
+    io.emit('receiveMessage', newMessage);
+
+    res.status(200).json({ success: true, message: 'Message sent successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred while sending the message' });
+    console.error('Error sending message:', error);
+    res.status(500).json({ error: 'An error occurred' });
   }
-};
+}
 
 const getUserMessages = async (req, res) => {
   const userId = req.params.userId;
