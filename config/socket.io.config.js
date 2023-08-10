@@ -1,15 +1,16 @@
 const socketIO = require('socket.io');
 const MessageModel = require('../Models/message.model');
-const cors = require('cors');
+const http = require('http');
+
 function setupSocket(server) {
-  const io = socketIO(server);
-  const corsOptions = {
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-    credentials: true, // Allow cookies to be sent with the request
-  };
-  
-  io.use(cors(corsOptions))
+  const io =new socketIO(http, {
+    cors: {
+      origin: 'http://localhost:3000', // Change this to your frontend's URL
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+  });
+
   io.on('connection', (socket) => {
     console.log('A user connected');
 
