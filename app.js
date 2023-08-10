@@ -10,12 +10,11 @@ const http = require('http')
 const port = process.env.PORT || 2000;
 const server = http.createServer(app)
 const MessageModel =require('./Models/message.model');
-const io = require('socket.io')(http,{
+const socket = require('socket.io')(http,{
   cors:{
     origin:"http://localhost:3000"
   }
 });
-const socket = io(server)
 // Connect to the database
 Db();
 
