@@ -15,7 +15,15 @@ const io = socketIO(server);
 Db();
 
 // Middleware
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST'],
+  credentials: true, // Allow cookies to be sent with the request
+};
+
+app.use(cors(corsOptions));
  // Enable Cross-Origin Resource Sharing
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
