@@ -2,11 +2,7 @@ const socketIO = require('socket.io');
 const MessageModel =require( '../Models/message.model');
 
 function setupSocket(server) {
-  const io = socketIO(server, {
-    cors: {
-      origin: "https://localhost:3000"
-    }
-  });
+  const io = socketIO(server);
   
   io.on('connection', (socket) => {
     console.log('A user connected');
