@@ -14,7 +14,11 @@ const io = Socket(server);
 // Connect to the database
 Db();
 
-
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST'],
+  credentials: true, // Allow cookies to be sent with the request
+};
 
 app.use(cors(corsOptions));
  // Enable Cross-Origin Resource Sharing
