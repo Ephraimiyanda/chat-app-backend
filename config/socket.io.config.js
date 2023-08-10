@@ -1,5 +1,5 @@
 const socketIO = require('socket.io');
-const MessageModel =require( '../Models/message.model');
+const MessageModel = require('../Models/message.model');
 
 function setupSocket(server) {
   const io = socketIO(server, {
@@ -7,7 +7,7 @@ function setupSocket(server) {
       origin: "http://localhost:3000"
     }
   });
-  
+
   io.on('connection', (socket) => {
     console.log('A user connected');
 
@@ -15,16 +15,15 @@ function setupSocket(server) {
     socket.on('sendMessage', async (message) => {
       try {
         // Handle the received message, process, and save it to the database
-        const newMessage  = new MessageModel({
+        const newMessage = new MessageModel({
           sender: message.senderId,
           receiver: message.receiverId,
           content: message.content,
         });
-        newMessage.save()
-        // Save the message to the database using your messageModel or any other method
+        await newMessage.save(); // Ensure you await the save operation
 
         // Emit the message to other clients
-        io.to(message.receiverId).emit('receiveMessage', message.receiverId);
+        io.to(message.receiverId).emit('receiveMessage', newMessage);
       } catch (error) {
         console.error('Error handling and emitting message:', error);
       }
