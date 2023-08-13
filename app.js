@@ -15,7 +15,7 @@ const io = Socket(server);
 Db();
 
 const corsOptions = {
-  origin: 'http://localhost:3000'||"https://herosocial-chat-app.netlify.app",
+  origin: "*",
   methods: ['GET', 'POST'],
   credentials: true, // Allow cookies to be sent with the request
 };
