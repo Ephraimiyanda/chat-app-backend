@@ -4,7 +4,7 @@ const MessageModel = require('../Models/message.model');
 function setupSocket(server) {
   const io = socketIO(server, {
     cors: {
-      origin: "http://localhost:3000"&&"https://herosocial-chat-app.netlify.app"
+      origin: "http://localhost:3000"|"https://herosocial-chat-app.netlify.app"
     }
   });
 
