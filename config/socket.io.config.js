@@ -20,10 +20,11 @@ function setupSocket(server) {
           receiver: message.receiverId,
           content: message.content,
         });
-        await newMessage.save(); // Ensure you await the save operation
+        await newMessage.save();
 
-        // Emit the message to other clients
-        io.to(socket.id).emit('receiveMessage', newMessage);
+        // Emit the message to the sender
+        socket.emit(`sender-${message.senderId}`, newMessage);
+
         // Emit the message to the receiver
         const receiverSocket = io.sockets.sockets.get(message.receiverId);
         if (receiverSocket) {
