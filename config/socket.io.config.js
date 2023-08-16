@@ -22,8 +22,11 @@ function setupSocket(server) {
         });
         await newMessage.save();
 
-        socket.emit(`receiver-${message.receiverId}`, newMessage);
-        
+        socket.emit(`sender-${message.senderId}`, newMessage);
+
+        // Emit the message to the receiver
+        io.to(message.receiverId).emit(`receiver-${message.senderId}`, newMessage); // Emit to specific room or socket ID
+      
       } catch (error) {
         console.error('Error handling and emitting message:', error);
       }
