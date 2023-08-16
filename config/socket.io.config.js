@@ -22,8 +22,6 @@ function setupSocket(server) {
         });
         await newMessage.save();
 
-        // Emit the message to the sender
-        socket.emit(`sender-${message.senderId}`, newMessage);
 
       socket.emit(`receive-${message.receiverId}`, newMessage);
         
