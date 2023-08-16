@@ -23,7 +23,7 @@ function setupSocket(server) {
         await newMessage.save();
 
         // Emit the message to the sender
-        socket.emit(`receiver-${message.receiverId}`, newMessage);
+        socket.emit(`sender-${message.senderId}`, newMessage);
 
         // Emit the message to the receiver
         const receiverSocket = io.sockets.sockets.get(message.receiverId);
