@@ -22,10 +22,7 @@ function setupSocket(server) {
         });
         await newMessage.save();
 
-        // Emit the message to the sender
-        socket.emit(`sender-${message.senderId}`, newMessage);
-
-        socket.emit(`receive-${message.receiverId}`, newMessage);
+        socket.emit(`receiver-${message.receiverId}`, newMessage);
         
       } catch (error) {
         console.error('Error handling and emitting message:', error);
