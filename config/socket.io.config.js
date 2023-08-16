@@ -25,7 +25,7 @@ function setupSocket(server) {
         // Emit the message to the sender
         socket.emit(`sender-${message.senderId}`, newMessage);
 
-        socket.to(message.receiverId).emit(`receiver-${message.receiverId}`, newMessage);
+        socket.emit(`receiver-${message.receiverId}`, newMessage);
         
         
       } catch (error) {
