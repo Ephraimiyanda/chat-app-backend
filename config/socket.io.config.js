@@ -20,13 +20,15 @@ function setupSocket(server) {
           receiver: message.receiverId,
           content: message.content,
         });
+        
+        socket.emit(`sender-${message.senderId}`, newMessage);
+
+        io.to(socket.id).emit(`receive-${message.receiverId}`, newMessage);
+         
         await newMessage.save();
 
         // Emit the message to the sender
-        socket.emit(`sender-${message.senderId}`, newMessage);
-
-       io.to(socket.id).emit(`receive-${message.receiverId}`, newMessage);
-        
+      
         
       } catch (error) {
         console.error('Error handling and emitting message:', error);
