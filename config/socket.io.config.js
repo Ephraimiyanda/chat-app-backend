@@ -1,5 +1,5 @@
 const socketIO = require('socket.io');
-const MessageModel = require('../Models/message.model');
+const MessageModel = require('../Models/message.mo0del');
 
 function setupSocket(server) {
   const io = socketIO(server, {
@@ -23,7 +23,7 @@ function setupSocket(server) {
         
         socket.emit(`sender-${message.senderId}`, newMessage);
 
-        io.to(socket.id).emit(`receive-${message.receiverId}`, newMessage);
+        io.emit(`receive-${message.receiverId}`, newMessage);
          
         await newMessage.save();
 
