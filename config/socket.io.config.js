@@ -21,8 +21,9 @@ function setupSocket(server) {
           content: message.content,
         });
         
-        socket.debounce(`sender-${message.senderId}`, newMessage, 1000);
-        io.debounce(`receive-${message.receiverId}`, newMessage, 1000);
+        socket.emit(`sender-${message.senderId}`, newMessage);
+
+        io.emit(`receive-${message.receiverId}`, newMessage);
          
         await newMessage.save();
 
