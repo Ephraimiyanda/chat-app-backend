@@ -1,5 +1,5 @@
 const socketIO = require('socket.io');
-const MessageModel = require('../Models/message.mo0del');
+const MessageModel = require('../Models/message.model');
 
 function setupSocket(server) {
   const io = socketIO(server, {
