@@ -12,7 +12,7 @@ route.post('/register',controller.registerUser);
 route.post('/login',controller.loginUser);
 route.post('/create',controller.createPost);
 route.get('/allUsers',controller.allUsers);
-route.post('/messages/:userId/:receiverId', controller.getUserMessages);
+route.get('/messages/:userId/:receiverId', controller.getUserMessages);
 route.post('/messages', controller.sendMessage);
 route.get('/:userId', controller.getUserById);
 route.get('/allPosts',controller.allPosts);
