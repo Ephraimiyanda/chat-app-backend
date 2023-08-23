@@ -12,10 +12,10 @@ route.post('/register',controller.registerUser);
 route.post('/login',controller.loginUser);
 route.post('/create',controller.createPost);
 route.get('/allUsers',controller.allUsers);
-route.get('/messages/:userId', controller.getUserMessages);
+route.post('/messages/:userId && :receiverId', controller.getUserMessages);
 route.post('/messages', controller.sendMessage);
 route.get('/:userId', controller.getUserById);
 route.get('/allPosts',controller.allPosts);
-route.get('/:postId',controller.getPostById);
-route.get('/:senderId',controller.getPostBySenderId);
+route.get('/post/:postId',controller.getPostById);
+route.get('/post/:senderId',controller.getPostBySenderId);
 module.exports = route
