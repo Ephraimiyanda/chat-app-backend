@@ -157,7 +157,45 @@ const createPost = async (req, res) => {
   }
 };
 
+const allPosts =  async(req,res)=>{
+  try {
+    const getPosts = await postModel.find()
+    res.json(getPosts)
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+const getPostById = async (req, res) => {
+  const postId = req.params.postId;
 
+  try {
+    const post = await postModel.findById(postId);
+    if (!post) {
+      return res.status(404).json({ error: 'post not found' });
+    }
 
-module.exports = { upload, getUserById , createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers };
+    // Respond with the user's data
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching post' });
+  }
+};
+
+const getPostBySenderId = async (req, res) => {
+  const senderId= req.params.senderId;
+
+  try {
+    const sender = await postModel.findById(senderId);
+    if (!sender) {
+      return res.status(404).json({ error: 'post of sender not found' });
+    }
+
+    // Respond with the user's data
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching post' });
+  }
+};
+module.exports = { upload, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
