@@ -101,8 +101,11 @@ const getUserMessages = async (req, res) => {
   const receiverId=req.params.receiverId
   try {
     // Fetch all messages where the user is either the sender or the receiver
-    const messages = await messageModel.find({
-      $or: [{ sender: userId }, { receiver:receiverId }],
+     const messages = await messageModel.find({
+      $or: [
+        { sender: userId, receiver: receiverId },
+        { sender: receiverId, receiver: userId },
+      ],
     });
 
     // Respond with the messages
