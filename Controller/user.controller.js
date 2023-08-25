@@ -5,7 +5,7 @@ const postModel = require("../Models/post.model");
 require("dotenv").config();
 const cloudinary = require("../config/cloudinaryConfig");
 const upload = require("../config/multerConfig");
-
+const followerModel=require("../Models/follower.model")
 
 
 const registerUser = async (req, res) => {
@@ -202,21 +202,24 @@ const getPostBySenderId = async (req, res) => {
   }
 };
 
+
 const followUser = async (req, res) => {
   const followerId = req.body.followerId; // ID of the user who wants to follow
   const userId = req.params.userId; // ID of the user being followed
 
   try {
-    // Find the user who wants to follow
-    const followerUser = await userModel.findById(followerId);
+    // Find or create the follower model for the follower
+    let followerUser = await followerModel.findOne({ user: followerId });
     if (!followerUser) {
-      return res.status(404).json({ error: 'Follower user not found' });
+      followerUser = new followerModel({ user: followerId });
+      await followerUser.save();
     }
 
-    // Find the user being followed
-    const userToFollow = await userModel.findById(userId);
+    // Find or create the follower model for the user being followed
+    let userToFollow = await followerModel.findOne({ user: userId });
     if (!userToFollow) {
-      return res.status(404).json({ error: 'User to follow not found' });
+      userToFollow = new followerModel({ user: userId });
+      await userToFollow.save();
     }
 
     // Check if the follower is already in the followers array
@@ -228,7 +231,7 @@ const followUser = async (req, res) => {
     userToFollow.followers.push(followerId);
     followerUser.following.push(userId);
 
-    // Save changes to both users
+    // Save changes to both follower models
     await userToFollow.save();
     await followerUser.save();
 
@@ -237,5 +240,6 @@ const followUser = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while following user' });
   }
 };
+
 
 module.exports = { upload,followUser, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
