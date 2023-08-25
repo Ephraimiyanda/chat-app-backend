@@ -201,4 +201,41 @@ const getPostBySenderId = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching post' });
   }
 };
-module.exports = { upload, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
+
+const followUser = async (req, res) => {
+  const followerId = req.body.followerId; // ID of the user who wants to follow
+  const userId = req.params.userId; // ID of the user being followed
+
+  try {
+    // Find the user who wants to follow
+    const followerUser = await userModel.findById(followerId);
+    if (!followerUser) {
+      return res.status(404).json({ error: 'Follower user not found' });
+    }
+
+    // Find the user being followed
+    const userToFollow = await userModel.findById(userId);
+    if (!userToFollow) {
+      return res.status(404).json({ error: 'User to follow not found' });
+    }
+
+    // Check if the follower is already in the followers array
+    if (userToFollow.followers.includes(followerId)) {
+      return res.status(400).json({ error: 'User is already following' });
+    }
+
+    // Update the followers and following arrays
+    userToFollow.followers.push(followerId);
+    followerUser.following.push(userId);
+
+    // Save changes to both users
+    await userToFollow.save();
+    await followerUser.save();
+
+    res.status(200).json({ message: 'User followed successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while following user' });
+  }
+};
+
+module.exports = { upload,followUser, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
