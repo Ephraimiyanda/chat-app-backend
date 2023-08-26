@@ -241,5 +241,20 @@ const followUser = async (req, res) => {
   }
 };
 
+const getFollowersByUserId = async (req, res) => {
+  const userId = req.params.userId;
 
-module.exports = { upload,followUser, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
+  try {
+    const userFollowers = await followerModel.findOne({ user: userId });
+    if (!userFollowers) {
+      return res.status(404).json({ error: 'User not found or has no followers' });
+    }
+
+    // Respond with the user's followers
+    res.status(200).json({ followers: userFollowers.followers });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching user followers' });
+  }
+};
+
+module.exports = { upload,followUser,getFollowersByUserId, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
