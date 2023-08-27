@@ -251,7 +251,7 @@ const getFollowersByUserId = async (req, res) => {
     }
 
     // Respond with the user's followers
-    res.status(200).json({ followers: userFollowers.followers });
+    res.status(200).json({ followers: userFollowers.following });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while fetching user followers' });
   }
