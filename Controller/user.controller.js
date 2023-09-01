@@ -257,4 +257,50 @@ const getFollowersByUserId = async (req, res) => {
   }
 };
 
-module.exports = { upload,followUser,getFollowersByUserId, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
+const unfollowUser = async (req, res) => {
+  const followerId = req.body.followerId; // ID of the user who wants to unfollow
+  const userId = req.params.userId; // ID of the user being unfollowed
+
+  try {
+    // Find the follower model for the follower
+    const followerUser = await followerModel.findOne({ user: followerId });
+    if (!followerUser) {
+      return res.status(400).json({ error: 'Follower not found' });
+    }
+
+    // Find the follower model for the user being unfollowed
+    const userToUnfollow = await followerModel.findOne({ user: userId });
+    if (!userToUnfollow) {
+      return res.status(400).json({ error: 'User to unfollow not found' });
+    }
+
+    // Check if the follower is in the followers array
+    const followerIndex = userToUnfollow.followers.indexOf(followerId);
+    if (followerIndex === -1) {
+      return res.status(400).json({ error: 'User is not following' });
+    }
+
+    // Remove the follower from the followers array
+    userToUnfollow.followers.splice(followerIndex, 1);
+
+    // Check if the user is in the following array of the follower
+    const followingIndex = followerUser.following.indexOf(userId);
+    if (followingIndex === -1) {
+      return res.status(400).json({ error: 'Follower is not following the user' });
+    }
+
+    // Remove the user from the following array of the follower
+    followerUser.following.splice(followingIndex, 1);
+
+    // Save changes to both follower models
+    await userToUnfollow.save();
+    await followerUser.save();
+
+    res.status(200).json({ message: 'User unfollowed successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while unfollowing user' });
+  }
+};
+
+
+module.exports = { upload,unfollowUser,followUser,getFollowersByUserId, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };

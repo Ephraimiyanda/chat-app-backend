@@ -18,6 +18,7 @@ route.get('/:userId', controller.getUserById);
 route.get('/allPosts',controller.allPosts);
 route.get('/post/:postId',controller.getPostById);
 route.get('/post/:senderId',controller.getPostBySenderId);
-route.post('/:userId/:followerId',controller.followUser);
+route.post('/follow/:userId/:followerId',controller.followUser);
+route.post('/unfollow/:userId/followerId',controller.unfollowUser);
 route.get('/followers/:userId',controller.getFollowersByUserId)
 module.exports = route
