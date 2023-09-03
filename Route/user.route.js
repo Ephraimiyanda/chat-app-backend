@@ -15,7 +15,7 @@ route.get('/allUsers',controller.allUsers);
 route.get('/messages/:userId/:receiverId', controller.getUserMessages);
 route.post('/messages', controller.sendMessage);
 route.get('/:userId', controller.getUserById);
-route.get('/allPosts',controller.allPosts);
+route.get('/post/allPosts',controller.allPosts);
 route.get('/post/:postId',controller.getPostById);
 route.get('/post/:senderId',controller.getPostBySenderId);
 route.post('/follow/:userId/:followerId',controller.followUser);
