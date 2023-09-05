@@ -12,12 +12,12 @@ route.post('/register',controller.registerUser);
 route.post('/login',controller.loginUser);
 route.post('/create',controller.createPost);
 route.get('/allUsers',controller.allUsers);
+route.get('/:userId', controller.getUserById);
 route.get('/messages/:userId/:receiverId', controller.getUserMessages);
 route.post('/messages', controller.sendMessage);
-route.get('/:userId', controller.getUserById);
 route.get('/post/allPosts',controller.allPosts);
 route.get('/post/:postId',controller.getPostById);
-route.get('/post/:senderId',controller.getPostBySenderId);
+route.get('/post/user/:senderId',controller.getPostBySenderId);
 route.post('/follow/:userId/:followerId',controller.followUser);
 route.post('/unfollow/:userId/:followerId',controller.unfollowUser);
 route.get('/followers/:userId',controller.getFollowersByUserId)
