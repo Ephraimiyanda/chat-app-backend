@@ -190,7 +190,7 @@ const getPostBySenderId = async (req, res) => {
   const senderId= req.params.senderId;
 
   try {
-    const sender = await postModel.find({sender:senderId});
+    const sender = await postModel.findById({sender:senderId});
     if (!sender) {
       return res.status(404).json({ error: 'post of sender not found' });
     }
