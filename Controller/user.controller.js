@@ -303,4 +303,69 @@ const unfollowUser = async (req, res) => {
 };
 
 
-module.exports = { upload,unfollowUser,followUser,getFollowersByUserId, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
+//get number of posts,followers and following
+const getUserStatistics = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    // Get user's post count
+    const postCount = await postModel.countDocuments({ sender: userId });
+
+    // Get user's followers count
+    const userFollowers = await followerModel.findOne({ user: userId });
+    const followersCount = userFollowers ? userFollowers.followers.length : 0;
+
+    // Get user's following count
+    const userFollowing = await followerModel.findOne({ user: userId });
+    const followingCount = userFollowing ? userFollowing.following.length : 0;
+
+    res.status(200).json({ postCount, followersCount, followingCount });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching user statistics' });
+  }
+};
+
+
+//get user object of followers
+const getFollowers = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const userFollowers = await followerModel.findOne({ user: userId });
+    if (!userFollowers) {
+      return res.status(404).json({ error: 'User not found or has no followers' });
+    }
+
+    const followerIds = userFollowers.followers;
+
+    // Fetch user objects of followers
+    const followers = await userModel.find({ _id: { $in: followerIds } });
+
+    res.status(200).json({ followers });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching user followers' });
+  }
+};
+
+//get user object of following
+const getFollowing = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const userFollowing = await followerModel.findOne({ user: userId });
+    if (!userFollowing) {
+      return res.status(404).json({ error: 'User not found or is not following anyone' });
+    }
+
+    const followingIds = userFollowing.following;
+
+    // Fetch user objects of following
+    const following = await userModel.find({ _id: { $in: followingIds } });
+
+    res.status(200).json({ following });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching user following' });
+  }
+};
+
+module.exports = { upload,getFollowers,getFollowing,getUserStatistics,unfollowUser,followUser,getFollowersByUserId, getUserById ,getPostBySenderId,getPostById, createPost, registerUser,loginUser, getUserProfile, sendMessage, getUserMessages, createPost, allUsers,allPosts };
