@@ -180,7 +180,7 @@ const getPostById = async (req, res) => {
     }
 
     // Respond with the user's data
-    res.status(200).json({ user });
+    res.status(200).json({ post });
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while fetching post' });
   }
@@ -196,7 +196,7 @@ const getPostBySenderId = async (req, res) => {
     }
 
     // Respond with the user's data
-    res.status(200).json({ user });
+    res.status(200).json({ sender});
   } catch (error) {
     res.status(500).json({ error: 'An error occurred while fetching post' });
   }
