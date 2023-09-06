@@ -186,22 +186,22 @@ const getPostById = async (req, res) => {
   }
 };
 
-const getPostsBySenderId = async (req, res) => {
-  const senderId = req.params.senderId;
-
-  try {
-    const posts = await postModel.find({ sender: senderId });
-
-    if (!posts || posts.length === 0) {
-      return res.status(404).json({ error: 'Posts by sender not found' });
+const getPostBySenderId = async (req, res) => {
+    const senderId = req.params.senderId;
+  
+    try {
+      const posts = await postModel.find({ sender: senderId });
+  
+      if (!posts || posts.length === 0) {
+        return res.status(404).json({ error: 'Posts by sender not found' });
+      }
+  
+      // Respond with the posts
+      res.status(200).json({ posts });
+    } catch (error) {
+      res.status(500).json({ error: 'An error occurred while fetching posts by sender' });
     }
-
-    // Respond with the posts
-    res.status(200).json({ posts });
-  } catch (error) {
-    res.status(500).json({ error: 'An error occurred while fetching posts by sender' });
-  }
-}
+};
 
 
 const followUser = async (req, res) => {
