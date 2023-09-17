@@ -26,5 +26,5 @@ route.get('/following/users/:userId',controller.getFollowing);
 route.get('/statistics/:userId',controller.getUserStatistics);
 route.post('/likePost/:postId',controller.likePost);
 route.post('/unlikePost/:postId',controller.unlikePost);
-route.get('/likedPosts/PostId',controller.hasLikedPost);
+route.get('/likedPosts/:PostId/:userId',controller.hasLikedPost);
 module.exports = route

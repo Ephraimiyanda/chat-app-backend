@@ -448,9 +448,10 @@ const unlikePost = async (req, res) => {
       .json({ error: "An error occurred while unliking the post" });
   }
 };
+
 const hasLikedPost = async (req, res) => {
   const postId = req.params.postId;
-  const userId = req.body.userId; // Assuming you have user authentication in place
+  const userId = req.params.userId; // Assuming you have user authentication in place
 
   try {
     // Find the post by ID
