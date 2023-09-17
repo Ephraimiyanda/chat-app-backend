@@ -387,7 +387,7 @@ const getFollowing = async (req, res) => {
 
 const likePost = async (req, res) => {
   const postId = req.params.postId;
-  const userId = req.userId; // Assuming you have user authentication in place
+  const userId = req.body.userId; // Assuming you have user authentication in place
 
   try {
     // Find the post by ID
