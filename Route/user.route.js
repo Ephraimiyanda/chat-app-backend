@@ -27,5 +27,5 @@ route.get('/statistics/:userId',controller.getUserStatistics);
 route.post('/likePost/:postId',controller.likePost);
 route.post('/unlikePost/:postId',controller.unlikePost);
 route.get('/likedPosts/:PostId/:userId',controller.hasLikedPost);
-router.get('/last-message-senders', getLastMessageSenders);
+route.get('/last-message-senders', getLastMessageSenders);
 module.exports = route
