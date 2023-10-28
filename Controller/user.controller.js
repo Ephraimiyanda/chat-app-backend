@@ -474,6 +474,25 @@ const hasLikedPost = async (req, res) => {
       });
   }
 };
+const getLastMessageSenders = async (req, res) => {
+  const userId = req.params.userId; // Get the user's ID
+
+  try {
+    const lastMessageSenders = await messageModel
+      .find({ receiver: userId })
+      .sort({ createdAt: -1 }) // Sort messages in descending order of creation
+      .limit(5) // Get the last 5 senders
+
+    const senderIds = [...new Set(lastMessageSenders.map(message => message.sender))]; // Unique sender IDs
+
+    // Fetch user objects of senders
+    const senders = await userModel.find({ _id: { $in: senderIds } });
+
+    res.status(200).json({ senders });
+  } catch (error) {
+    res.status(500).json({ error: 'An error occurred while fetching last message senders' });
+  }
+};
 
 module.exports = {
   upload,
@@ -498,4 +517,5 @@ module.exports = {
   likePost,
   unlikePost,
   hasLikedPost,
+  getLastMessageSenders
 };
