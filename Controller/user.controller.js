@@ -474,6 +474,7 @@ const hasLikedPost = async (req, res) => {
       });
   }
 };
+
 const getLastMessageSenders = async (req, res) => {
   const userId = req.params.userId; // Get the user's ID
 
