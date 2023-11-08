@@ -506,15 +506,11 @@ const search = async (req, res) => {
   try {
     if (searchType === "accounts") {
       // Search for accounts based on the username
-      const accounts = await userModel.find({
-        name: { $regex: new RegExp(searchQuery, "i") },
-      });
+      const accounts = await userModel.find({ name: { $regex: searchQuery, $options: "i" } });
       res.status(200).json({ results: accounts });
     } else if (searchType === "posts") {
       // Search for posts based on their content
-      const posts = await postModel.find({
-        text: { $regex: new RegExp(searchQuery, "i") },
-      });
+      const posts = await postModel.find({ text: { $regex: searchQuery, $options: "i" } });
       res.status(200).json({ results: posts });
     } else {
       res.status(400).json({ error: "Invalid search type" });
