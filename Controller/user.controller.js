@@ -514,6 +514,7 @@ const search = async (req, res) => {
       res.status(400).json({ error: "Invalid search type" });
     }
   } catch (error) {
+    console.error("Error during search:", error);
     res.status(500).json({ error: "An error occurred while searching" });
   }
 };
