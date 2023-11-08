@@ -495,8 +495,7 @@ const getLastMessageSenders = async (req, res) => {
   }
 };
 const search = async (req, res) => {
-  const  searchQuery = req.params.searchQuery;
-  const searchType=req.params.searchType
+  const { searchQuery, searchType } = req.query;
 
   if (!searchQuery || !searchType) {
     return res.status(400).json({ error: "Invalid search parameters" });
@@ -509,7 +508,7 @@ const search = async (req, res) => {
       res.status(200).json({ results: accounts });
     } else if (searchType === "posts") {
       // Search for posts based on their content
-      const posts = await postModel.includes({ text: { $regex: searchQuery, $options: "i" } });
+      const posts = await postModel.include({ text: { $regex: searchQuery, $options: "i" } });
       res.status(200).json({ results: posts });
     } else {
       res.status(400).json({ error: "Invalid search type" });
