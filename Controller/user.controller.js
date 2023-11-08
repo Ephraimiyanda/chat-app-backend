@@ -496,6 +496,7 @@ const getLastMessageSenders = async (req, res) => {
 };
 
 
+
 const search = async (req, res) => {
   const { searchQuery, searchType } = req.query;
 
@@ -505,18 +506,28 @@ const search = async (req, res) => {
 
   try {
     if (searchType === "accounts") {
-      // Fetch all accounts and filter based on the username
-      const accounts = await userModel.find({});
+      // Search for accounts based on the username
+      const accounts = await userModel.find({
+        name: { $regex: searchQuery, $options: "i" },
+      });
+
+      // Filter accounts that match the search query
       const filteredAccounts = accounts.filter((account) =>
-        new RegExp(searchQuery, "i").test(account.name)
+        account.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
+
       res.status(200).json({ results: filteredAccounts });
     } else if (searchType === "posts") {
-      // Fetch all posts and filter based on the content
-      const posts = await postModel.find({});
+      // Search for posts based on their content
+      const posts = await postModel.find({
+        text: { $regex: searchQuery, $options: "i" },
+      });
+
+      // Filter posts that match the search query
       const filteredPosts = posts.filter((post) =>
-        new RegExp(searchQuery, "i").test(post.text)
+        post.text.toLowerCase().includes(searchQuery.toLowerCase())
       );
+
       res.status(200).json({ results: filteredPosts });
     } else {
       res.status(400).json({ error: "Invalid search type" });
