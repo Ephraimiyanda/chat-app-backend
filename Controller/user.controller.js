@@ -495,7 +495,8 @@ const getLastMessageSenders = async (req, res) => {
   }
 };
 const search = async (req, res) => {
-  const { searchQuery, searchType } = req.query;
+  const  searchQuery = req.params.searchQuery;
+  const searchType=req.params.searchType
 
   if (!searchQuery || !searchType) {
     return res.status(400).json({ error: "Invalid search parameters" });
