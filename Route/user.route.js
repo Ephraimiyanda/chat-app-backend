@@ -28,4 +28,5 @@ route.post('/likePost/:postId',controller.likePost);
 route.post('/unlikePost/:postId',controller.unlikePost);
 route.get('/likedPosts/:PostId/:userId',controller.hasLikedPost);
 route.get('/last-message-senders/:userId', controller.getLastMessageSenders);
+route.get('/search/:searchType/:searchQuery',controller.search)
 module.exports = route
