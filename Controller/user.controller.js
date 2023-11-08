@@ -494,8 +494,9 @@ const getLastMessageSenders = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while fetching last message senders' });
   }
 };
-const search = async (req, res) => {
-  const { searchQuery, searchType } = req.query;
+const searchItems = async (req, res) => {
+  const searchQuery = req.params.searchQuery
+  const searchType  = req.params.searchType;
 
   if (!searchQuery || !searchType) {
     return res.status(400).json({ error: "Invalid search parameters" });
@@ -519,7 +520,6 @@ const search = async (req, res) => {
 };
 
 module.exports = {
-  upload,
   getFollowers,
   getFollowing,
   getUserStatistics,
@@ -542,5 +542,5 @@ module.exports = {
   unlikePost,
   hasLikedPost,
   getLastMessageSenders,
-  search
+  searchItems
 };
